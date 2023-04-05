@@ -7,4 +7,9 @@ exiftool
 kerbrute
 impacket-GetNPUsers
 john
+timedatectl
+ntpdate
+impacket-getTGT
+crackmapexec
+impacket-smbclient
 ```

