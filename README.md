@@ -12,4 +12,9 @@ ntpdate
 impacket-getTGT
 crackmapexec
 impacket-smbclient
+bloodhound-python
+PowerView.ps1 (on Windows)
+ActiveDirectory Module (windows)
+pywhisker
+gettgtpkinit
 ```
