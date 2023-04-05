@@ -3,3 +3,5 @@ tee
 wget
 exiftool
 kerbrute
+impacket-GetNPUsers
+john

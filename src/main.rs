@@ -51,7 +51,7 @@ fn main() {
         println!("\nSelect an option:");
         println!("Step 1. Generate Username List");
         println!("Step 2. Validate/ASREPRoast");
-        println!("3. Option 3");
+        println!("Step 3. Sync time to Absolute.htb");
         println!("4. Quit");
 
         print!("Enter your choice: ");
@@ -77,6 +77,7 @@ fn main() {
                 step_2::run_impacket_getnpusers();
                 println!("Cracking Hash...");
                 step_2::run_john();
+                println!("Creds.txt Updated")
             }
             "3" => {
                 println!("You selected Option 3");
