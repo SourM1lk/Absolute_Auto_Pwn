@@ -30,8 +30,9 @@ fn main() {
             "7" => display_next_steps(),
             "8" => display_windows_warning(),
             "9" => step_9::run(),
+            "10" => evil_winrm_display(),
             "00" => run_steps_1_to_4(),
-            "10" => {
+            "11" => {
                 println!("Quitting...");
                 break;
             }
@@ -82,7 +83,8 @@ fn add_host_entry(ip: &str) {
 }
 
 fn display_menu() {
-    println!("{}", "\nSelect an option:".bold());
+    println!("{}", "\nSelect an option by entering the corresponding number:".bold());
+    println!("{}", "00. Automatically Run Steps 1-4".green());
     println!("{}", "Step 1. Generate Username List".green());
     println!("{}", "Step 2. Validate + ASREPRoast".green());
     println!("{}", "Step 3. Sync time to Absolute.htb".green());
@@ -94,7 +96,8 @@ fn display_menu() {
     println!("{}", "Step 8. MUST BE RAN ON WINDOWS!".bold().red());
     println!("{}", "------------------------------------------------------".bold().red());
     println!("{}", "Step 9. Own WinRM_User!".green());
-    println!("{}", "10. Quit".green());
+    println!("{}", "Step 10. Log in with WinRM_User via evil-winrm".green());
+    println!("{}", "11. Quit".green());
 }
 
 fn get_user_choice() -> String {
@@ -117,6 +120,13 @@ fn display_next_steps() {
 
 fn display_windows_warning() {
     println!("Please Run this Step on Windows......");
+}
+
+fn evil_winrm_display() {
+    println!("Congratulations on obtaining User access!");
+    println!("To use evil-winrm, you'll need to configure your /etc/krb5.conf.");
+    println!("Execute the following command in your terminal to log in as WinRM_User:");
+    println!("evil-winrm -i DC.ABSOLUTE.HTB -r ABSOLUTE.HTB");
 }
 
 fn run_steps_1_to_4() {
