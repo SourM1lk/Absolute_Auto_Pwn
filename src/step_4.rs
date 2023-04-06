@@ -29,7 +29,7 @@ pub fn run_impacket_gettgt_first_user() {
         let ccache_filename: &str = ccache_line.split("in ").nth(1).unwrap_or("").trim();
 
         // Run "export KRB5CCNAME="
-        let export_output = Command::new("bash")
+        Command::new("bash")
             .arg("-c")
             .arg(format!("export KRB5CCNAME={}", ccache_filename))
             .output()
@@ -134,7 +134,7 @@ pub fn run_impacket_gettgt_second_user() {
         let ccache_filename: &str = ccache_line.split("in ").nth(1).unwrap_or("").trim();
 
         // Run "export KRB5CCNAME="
-        let export_output = Command::new("bash")
+        Command::new("bash")
             .arg("-c")
             .arg(format!("export KRB5CCNAME={}", ccache_filename))
             .output()

@@ -1,5 +1,5 @@
 use std::process::Command;
-use std::fs::{File, OpenOptions};
+use std::fs::File;
 use std::io::{Write, stdin, Read};
 
 pub fn run_kerbrute() {
@@ -58,7 +58,7 @@ pub fn run_john() {
     rockyou_path = rockyou_path.trim().to_string();
 
     // Prepare the john command with the specified arguments
-    let output = Command::new("john")
+    Command::new("john")
         .arg(format!("-w:{}", rockyou_path))
         .arg("hash")
         .output()
