@@ -1,6 +1,11 @@
 use std::process::Command;
 
-pub fn download_test_exe() {
+pub fn run() {
+    println!("Downloading test.exe from share...");
+    download_test_exe();
+}
+
+fn download_test_exe() {
     // Prepare the impacket-smbclient command with the specified arguments
     let output = Command::new("impacket-smbclient")
         .arg("\\\\dc.absolute.htb\\Shared")

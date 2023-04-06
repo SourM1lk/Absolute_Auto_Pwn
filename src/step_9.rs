@@ -1,7 +1,12 @@
 use std::process::Command;
 use std::io;
 
-pub fn run_pywhisker() {
+pub fn run () {
+    println!("Running pywhisker...");
+    run_pywhisker(); 
+}
+
+fn run_pywhisker() {
     // Prompt the user for the location of pywhisker.py
     println!("Please enter the path to pywhisker.py:");
     let mut pywhisker_path = String::new();

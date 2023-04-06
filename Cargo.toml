@@ -10,3 +10,4 @@ path = "src/windows_main.rs"
 [dependencies]
 console = "0.15.5"
 regex = "1.7.3"
+colored = "2.0"

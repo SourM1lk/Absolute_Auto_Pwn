@@ -1,6 +1,13 @@
 use std::process::Command;
+use colored::*;
 
-pub fn run_ntpdate() {
+pub fn run() {
+    println!("{}", "Warning: This command will sync your time to absolute.htb...".blue());
+    run_ntpdate();
+    println!("{}", "Time Changed, you should double check it really did....".green());
+}
+
+fn run_ntpdate() {
     // Stop the systemd-timesyncd.service
     let stop_output = Command::new("sudo")
         .arg("systemctl")

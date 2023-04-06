@@ -3,8 +3,20 @@ use std::fs::{File, OpenOptions};
 use std::io::{Write, BufRead, BufReader, BufWriter};
 use console::strip_ansi_codes;
 use regex::Regex;
+use colored::*;
 
-pub fn run_impacket_gettgt_first_user() {
+pub fn run(){
+    println!("{}", "Creating TGT..".blue());
+    run_impacket_gettgt_first_user();
+    println!("{}", "Dumping Users....".blue());
+    run_crackmapexec();
+    println!("{}", "Updating Creds.txt...".green());
+    update_creds_file();
+    println!("{}", "Creating New TGT for New User...".blue());
+    run_impacket_gettgt_second_user();
+}
+
+fn run_impacket_gettgt_first_user() {
     let input_path = "creds.txt";
     let file = File::open(input_path).expect("Unable to open file");
     let reader = BufReader::new(file);
@@ -38,7 +50,7 @@ pub fn run_impacket_gettgt_first_user() {
     }
 }
 
-pub fn run_crackmapexec() {
+fn run_crackmapexec() {
     // Read the first line from the creds.txt file
     let input_path = "creds.txt";
     let file = File::open(input_path).expect("Unable to open file");
@@ -73,7 +85,7 @@ pub fn run_crackmapexec() {
     println!("CrackMapExec results saved to {}", output_file_path);
 }
 
-pub fn update_creds_file() {
+fn update_creds_file() {
     // Open the crackmapexec_output.txt file
     let output_file_path = "crackmapexec_LDAP_output.txt";
     let output_file = File::open(output_file_path).expect("Unable to open output file");
@@ -109,7 +121,7 @@ pub fn update_creds_file() {
     }
 }
 
-pub fn run_impacket_gettgt_second_user() {
+fn run_impacket_gettgt_second_user() {
     let input_path = "creds.txt";
     let file = File::open(input_path).expect("Unable to open file");
     let reader = BufReader::new(file);

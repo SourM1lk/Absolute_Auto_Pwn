@@ -1,8 +1,18 @@
 use std::process::Command;
 use std::fs::File;
 use std::io::{Write, BufRead, BufReader};
+use colored::*;
 
-pub fn image_grab() {
+pub fn run() {
+    println!("{}", "Getting Images...".blue());
+    image_grab();
+    println!("{}", "Extracting Artist Names".blue());
+    extract_artist_and_write_to_file();
+    println!("{}", "Generating Username List...".blue());
+    transform_usernames();
+}
+
+fn image_grab() {
     // For loop to grab all images
     for i in 1..=6 {
         let url = format!("http://absolute.htb/images/hero_{}.jpg", i);
@@ -15,7 +25,7 @@ pub fn image_grab() {
     }
 }
 
-pub fn extract_artist_and_write_to_file() {
+fn extract_artist_and_write_to_file() {
     let mut file = File::create("username.txt")
         .expect("Unable to create file");
 
@@ -43,7 +53,7 @@ pub fn extract_artist_and_write_to_file() {
     }
 }
 
-pub fn transform_usernames() {
+fn transform_usernames() {
     // Get username.txt
     let input_path = "username.txt";
     // Output to usernames_final.txt

