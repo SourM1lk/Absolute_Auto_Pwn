@@ -1,6 +1,6 @@
 use std::process::Command;
-use std::fs::File;
-use std::io::{Write, stdin};
+use std::fs::{File, OpenOptions};
+use std::io::{Write, stdin, Read};
 
 pub fn run_kerbrute() {
     // Prepare the kerbrute command with the specified arguments
@@ -88,4 +88,33 @@ pub fn run_john() {
             writeln!(&mut creds_file, "{}:{}", username, password).expect("Unable to write data to file");
         }
     }
+}
+
+pub fn modify_creds_file() {
+    let input_path = "creds.txt";
+    let mut file = File::open(input_path).expect("Unable to open file");
+    let mut contents = String::new();
+    file.read_to_string(&mut contents).expect("Unable to read the file");
+
+    let mut new_contents = String::new();
+
+    for line in contents.lines() {
+        if line.contains("$krb5asrep$") {
+            let parts: Vec<&str> = line.split(":").collect();
+            if parts.len() >= 2 {
+                let password = parts[1];
+                let full_username = parts[0].trim_start_matches("$krb5asrep$23$").trim_end_matches("@ABSOLUTE.HTB");
+                let username_parts: Vec<&str> = full_username.split(".").collect();
+                if username_parts.len() >= 2 {
+                    let username = format!("{}.{}", username_parts[0], username_parts[1]);
+                    new_contents.push_str(&format!("{}:{}\n", username, password));
+                }
+            }
+        } else {
+            new_contents.push_str(&format!("{}\n", line));
+        }
+    }
+
+    let mut file = File::create(input_path).expect("Unable to create file");
+    file.write_all(new_contents.as_bytes()).expect("Unable to write data to file");
 }

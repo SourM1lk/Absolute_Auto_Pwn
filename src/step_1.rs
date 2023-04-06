@@ -28,8 +28,8 @@ pub fn extract_artist_and_write_to_file() {
 
         let output_str = String::from_utf8_lossy(&output.stdout);
         let artist_line = output_str.lines()
-            .find(|line| line.contains("Artist"))
-            .expect("Artist not found");
+            .find(|line| line.contains("Author"))
+            .expect("Author not found");
 
         let artist: String = artist_line.split(": ")
             .nth(1)
@@ -39,6 +39,7 @@ pub fn extract_artist_and_write_to_file() {
 
         writeln!(&mut file, "{}", artist)
             .expect("Unable to write data to file");
+        println!("Addded {} to username.txt", artist);
     }
 }
 
