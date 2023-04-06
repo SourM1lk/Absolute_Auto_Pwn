@@ -3,7 +3,9 @@ name = "Absolute_Auto_Pwn"
 version = "0.1.0"
 edition = "2021"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[[bin]]
+name = "Absolute_Auto_Pwn_windows"
+path = "src/windows_main.rs"
 
 [dependencies]
 console = "0.15.5"
