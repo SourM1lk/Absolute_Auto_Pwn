@@ -60,8 +60,10 @@ rockyou.txt
 2. Openvpn installed with your .ovpn file for HTB
 3. Sync your Windows time to absolute.htb
 4. On your OpenVPN LAN Adapter set the primary DNS as the absolute.htb IP address
+5. PowerView.ps1 in same directory as program
+6. ActiveDirectory Module installed on windows system
 
-Note: The Auto Pwn program will try to set these, but more then likley fail, until I spend more time on this
+Note: The Auto Pwn program will try to set steps 3 and 4, but more then likley fail, until I spend more time on this
 ```
 
 
